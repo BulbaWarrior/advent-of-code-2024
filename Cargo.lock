@@ -23,5 +23,6 @@ dependencies = [
 name = "day2"
 version = "0.1.0"
 dependencies = [
+ "advent-of-code-2024",
  "anyhow",
 ]

@@ -1,3 +1,5 @@
+use advent_of_code_2024::All;
+use anyhow::Context;
 use std::{
     cmp::Ordering,
     fs::File,
@@ -9,27 +11,36 @@ fn main() -> anyhow::Result<()> {
     let input = File::open(filename)?;
     let input = BufReader::new(input);
     let reports = input.lines().map(|line| {
-        line.unwrap()
+        let res = line?
             .split_whitespace()
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Report>()
+            .map(|x| x.parse::<u32>())
+            .collect::<Result<Report, _>>();
+        anyhow::Ok(res?)
     });
 
-    let safe_reports: u32 = reports
-        .map(|report| match report_safe(&report).unwrap() {
-            false => {
-                for i in 0..report.len() {
-                    let mut tolerated = report.clone();
-                    tolerated.remove(i);
-                    if report_safe(&tolerated).unwrap() {
-                        return 1;
+    let All(safe_reports): All<u32, _> = reports
+        .map(|report| -> anyhow::Result<u32> {
+            let report = report?;
+            match report_safe(&report).context("found empty report")? {
+                false => {
+                    for i in 0..report.len() {
+                        let mut tolerated = report.clone();
+                        tolerated.remove(i);
+                        if report_safe(&tolerated).context(
+                            "empty report after removing one value, this shouldn't be pssible",
+                        )? {
+                            return Ok(1);
+                        }
                     }
+                    Ok(0)
                 }
-                0
+                true => Ok(1),
             }
-            true => 1,
         })
+        .map(All)
         .sum();
+
+    let safe_reports = safe_reports?;
 
     println!("total safe reports: {safe_reports}");
     Ok(())
