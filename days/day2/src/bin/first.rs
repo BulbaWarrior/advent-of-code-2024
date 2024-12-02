@@ -4,24 +4,33 @@ use std::{
     io::{BufRead, BufReader},
 };
 
+use advent_of_code_2024::All;
+use anyhow::{Context, Ok};
+
 fn main() -> anyhow::Result<()> {
     let filename = "input.txt";
     let input = File::open(filename)?;
     let input = BufReader::new(input);
     let reports = input.lines().map(|line| {
-        line.unwrap()
+        let report = line?
             .split_whitespace()
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Report>()
+            .map(|x| x.parse::<u32>())
+            .collect::<Result<Report, _>>();
+        anyhow::Ok(report?)
     });
 
-    let safe_reports: u32 = reports
-        .map(|report| match report_safe(report).unwrap() {
-            false => 0,
-            true => 1,
+    let All(safe_reports): All<u32, _> = reports
+        .map(|report| {
+            let safe = match report_safe(report?).context("empty report")? {
+                false => 0,
+                true => 1,
+            };
+            Ok(safe)
         })
+        .map(All)
         .sum();
 
+    let safe_reports = safe_reports?;
     println!("total safe reports: {safe_reports}");
     Ok(())
 }
