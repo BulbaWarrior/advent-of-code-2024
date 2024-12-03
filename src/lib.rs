@@ -1,4 +1,4 @@
-use std::iter::Sum;
+use std::iter::{Product, Sum};
 
 /// A wrapper for summing on results with `all` sematics
 /// this will produce the sum if all the elements are Ok,
@@ -46,6 +46,23 @@ impl<T: Sum, E> Sum for All<T, E> {
         for All(item) in iter {
             match item {
                 Ok(item) => acc = [acc, item].into_iter().sum(),
+                err => return All(err),
+            }
+        }
+        All(Ok(acc))
+    }
+}
+
+impl<T: Product, E> Product for All<T, E> {
+    fn product<I: Iterator<Item = Self>>(mut iter: I) -> Self {
+        let mut acc = match iter.next() {
+            None => return All(Ok([].into_iter().product())),
+            Some(All(Ok(val))) => val,
+            Some(All(err)) => return All(err),
+        };
+        for All(item) in iter {
+            match item {
+                Ok(item) => acc = [acc, item].into_iter().product(),
                 err => return All(err),
             }
         }
