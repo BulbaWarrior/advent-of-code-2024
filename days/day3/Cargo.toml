@@ -1,0 +1,9 @@
+[package]
+name = "day3"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+regex = "1.11.1"
+advent-of-code-2024 = { path = "../.." }
