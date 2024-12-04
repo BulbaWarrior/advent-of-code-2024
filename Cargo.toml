@@ -7,4 +7,4 @@ edition = "2021"
 anyhow = "1.0.93"
 
 [workspace]
-members = ["./days/*", "days/day2", "days/day3"]
+members = ["./days/*", "days/day2", "days/day3", "days/day4"]
