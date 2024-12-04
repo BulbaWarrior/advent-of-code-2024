@@ -3,6 +3,8 @@ use std::{
     io::{BufRead, BufReader},
 };
 
+use day4::{Grid, Position, Shift};
+
 fn main() -> anyhow::Result<()> {
     let filename = "input.txt";
     let input = File::open(filename)?;
@@ -31,51 +33,11 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-#[derive(Clone, Copy)]
-struct Position {
-    x: i32,
-    y: i32,
+trait CheckPos {
+    fn check_position(&self, target: &str, position: Position) -> usize;
 }
 
-#[derive(Clone, Copy)]
-struct Shift {
-    x: i8,
-    y: i8,
-}
-
-impl std::ops::Add<Shift> for Position {
-    type Output = Position;
-
-    fn add(self, rhs: Shift) -> Self::Output {
-        let Self { x, y } = self;
-        Self {
-            x: x + rhs.x as i32,
-            y: y + rhs.y as i32,
-        }
-    }
-}
-
-impl std::ops::Mul<i8> for Shift {
-    type Output = Self;
-
-    fn mul(self, rhs: i8) -> Self::Output {
-        let Self { x, y } = self;
-        Self {
-            x: x * rhs,
-            y: y * rhs,
-        }
-    }
-}
-
-struct Grid(Vec<String>);
-impl Grid {
-    fn get(&self, Position { x, y }: Position) -> Option<char> {
-        let y: usize = y.try_into().ok()?;
-        let x: usize = x.try_into().ok()?;
-        let row = self.0.get(y)?;
-        row.chars().nth(x)
-    }
-
+impl CheckPos for Grid {
     fn check_position(&self, target: &str, position: Position) -> usize {
         let len = target.len();
         let shifts = [
