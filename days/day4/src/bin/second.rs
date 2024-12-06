@@ -4,8 +4,8 @@ use std::{
     io::{BufRead, BufReader},
 };
 
+use advent_of_code_2024::grid::{Grid, Position, Shift};
 use anyhow::anyhow;
-use day4::{Grid, Position, Shift};
 
 fn main() -> anyhow::Result<()> {
     let filename = "input.txt";

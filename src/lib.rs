@@ -1,3 +1,4 @@
+pub mod grid;
 use std::iter::{Product, Sum};
 
 /// A wrapper for summing on results with `all` sematics
