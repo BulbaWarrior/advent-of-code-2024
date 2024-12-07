@@ -55,6 +55,9 @@ fn main() -> anyhow::Result<()> {
         current = grid.get(next).map(|_| next);
         Some(visited)
     });
+    // turns out this is not sound: if input contains an infinite
+    // loop, path will become an infinite iterator,
+    // which would cause "Hash table capacity overflow"
     let positions: HashSet<_> = path.collect();
     println!("total distinct positions: {}", positions.len());
 
