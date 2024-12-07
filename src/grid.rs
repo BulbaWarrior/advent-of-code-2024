@@ -1,4 +1,4 @@
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -41,5 +41,24 @@ impl Grid {
         let x: usize = x.try_into().ok()?;
         let row = self.0.get(y)?;
         row.chars().nth(x)
+    }
+
+    pub fn width(&self) -> usize {
+        self.0[0].len()
+    }
+
+    pub fn height(&self) -> usize {
+        self.0.len()
+    }
+
+    pub fn find(&self, target: char) -> Option<Position> {
+        self.0.iter().enumerate().find_map(|(y, row)| {
+            row.chars().enumerate().find_map(|(x, sym)| {
+                (target == sym).then_some(Position {
+                    x: x as i32,
+                    y: y as i32,
+                })
+            })
+        })
     }
 }

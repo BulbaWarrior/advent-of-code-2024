@@ -64,6 +64,10 @@ dependencies = [
 [[package]]
 name = "day6"
 version = "0.1.0"
+dependencies = [
+ "advent-of-code-2024",
+ "anyhow",
+]
 
 [[package]]
 name = "memchr"
